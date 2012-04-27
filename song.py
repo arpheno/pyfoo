@@ -1,5 +1,5 @@
 """pyFoo, a foobar2000 replacement for GNU/Linux systems.
-    Copyright (C) <year>  <name of author>
+    Copyright (C) 2012 Sebastian 'arphen' Wozny
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,27 +15,41 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
     """
 class Song:
+
     def __init__(self,path,obj):
         # Obj should be a mutagen.mp3.MP3 object
         self.path=path
+        self.info={}
+        self.info['TPE1']=set()
+        self.info['TIT2']=set()
+        self.info['TCON']=set()
         try:
             try:
-                self.artist=obj['TPE1']
+                self.info['TPE1']=set(obj['TPE1'].text)
             except KeyError as e:
-                self.artist=""
-                print e
+                print "Missing key:",e
             try:
-                self.title=obj['TIT2']
+                self.info['TIT2']=set(obj['TIT2'].text)
             except KeyError as e:
-                self.title=""
-                print e
+                print "Missing key:",e
             try:
-                self.genre=obj['TCON']
+                self.info['TCON']=set(obj['TCON'].text)
             except KeyError as e:
-                self.genre=""
-                print e
-        except TypeError:
-            self.genre=""
-            self.artist=""
-            self.title=""
-            pass
+                print "Missing key:",e
+        except TypeError as e:
+            print "Type error:",e
+
+    def __getitem__(self,key):
+        if not self.info.has_key(key):
+            raise KeyError
+        else:
+            return self.info[key]
+    def __repr__(self,order):
+        return " ".join(self.info['TPE1']).encode("utf-8")+" - "+" ".join(self.info['TPE2']).encode('utf-8')
+    def represent(self,order):
+        response=""
+        while order:
+            o=order.pop(0)
+            response+=" ".join(self.info[o]).encode('utf-8')
+            response+=" "
+        return response
