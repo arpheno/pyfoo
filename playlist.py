@@ -24,6 +24,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from song import Song
 import random
+from modeltest import ModelTest
 class TreeNode:
     def __init__(self):
         self.data=None
@@ -69,11 +70,7 @@ class LibraryModel(QAbstractItemModel):
                 return index.internalPointer().data.represent(['TPE1','TIT2'])
             else:
                 return index.internalPointer().key.encode('utf-8')
-        if role==32:
-            if index.internalPointer().data:
-                return index.internalPointer().data.represent(['TPE1','TIT2','TCON'])
-            else:
-                return ""
+
     def columnCount(self,parent):
         return 1
 
@@ -166,32 +163,15 @@ class LibraryModel(QAbstractItemModel):
     def _find_paths(self):
         tlist=[]
         with open("library.cfg") as f:
-            data = f.readlines()
-        return [os.path.join(root,f) for root,dirs,files in os.walk(self.data[0]) for f in files if ".mp3" in f]
+            data = f.read()
+        self.data=data.split("\n")
+        for root, dirs, files in os.walk(self.data[0]):
+            for f in files:
+                if ".mp3" in f:
+                    tlist.append(os.path.join(root,f))
+        return tlist
 
     def search(self,keyword):
         return [x for x in self.songs if keyword in "".join("".join(x.info))]
 if __name__ == "__main__":
     pass
-
-class Filter(QSortFilterProxyModel):
-    def __init__(self,source):
-        QSortFilterProxyModel.__init__(self)
-        self.setSourceModel(source)
-        self.setFilterRole(32)
-        self.exp="Eminem"
-    def change_exp(self,new):
-        self.exp=new
-        self.invalidateFilter()
-    def filterAcceptsRow(self,row,parent):
-        pt=self.sourceModel().index(row,0,parent)
-        key=pt.data(32).toString()
-        if key=="":
-            print "hey"
-            if any([self.filterAcceptsRow(i,pt) for i in range(self.sourceModel().rowCount(pt))]):
-                return True
-            return False
-        elif self.exp in key:
-            print "YES"
-            return True
-        return False

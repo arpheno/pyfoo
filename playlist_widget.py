@@ -13,7 +13,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>."""
-from library import *
+from library import Library
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
@@ -24,4 +24,4 @@ class LibraryWidget(QTreeView):
         self.model=LibraryModel(path_to_cfg)
         self._rebuild_view=False
 
-        self.setModel(Filter(self.model))
+        self.setModel(self.model)
