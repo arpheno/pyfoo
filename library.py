@@ -166,19 +166,20 @@ class LibraryModel(QAbstractItemModel):
     def _find_paths(self):
         tlist=[]
         with open("library.cfg") as f:
-            data = f.readlines()
-        return [os.path.join(root,f) for root,dirs,files in os.walk(self.data[0]) for f in files if ".mp3" in f]
+            data = f.read()
+        self.data=data.split("\n")
+        for root, dirs, files in os.walk(self.data[0]):
+            for f in files:
+                if ".mp3" in f:
+                    tlist.append(os.path.join(root,f))
+        return tlist
 
     def search(self,keyword):
         return [x for x in self.songs if keyword in "".join("".join(x.info))]
-if __name__ == "__main__":
-    pass
-
 class Filter(QSortFilterProxyModel):
     def __init__(self,source):
         QSortFilterProxyModel.__init__(self)
         self.setSourceModel(source)
-        self.setFilterRole(32)
         self.exp="Eminem"
     def change_exp(self,new):
         self.exp=new
