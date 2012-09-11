@@ -12,28 +12,15 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-    """
-from library_widget import LibraryWidget
-from filter_widget import FilterWidget
+    along with this program.  If not, see <http://www.gnu.org/licenses/>."""
+from library import *
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import sys
-#import code; code.interact(local=locals())
-if len(sys.argv)>1:
-    if sys.argv[1]=="rebuild":
-        a=None
-else:
-    a="data.pkl"
-app = QApplication(sys.argv)
-window = QWidget()
-layout=QVBoxLayout()
-lw=LibraryWidget(a)
-edit=FilterWidget(lw)
-layout.addWidget(lw)
-layout.addWidget(edit)
-window.setLayout(layout)
-window.show()
-edit.show()
-lw.show()
-app.exec_()
+
+class FilterWidget(QTextEdit):
+    def __init__(self,library):
+        QTextEdit.__init__(self)
+        self.library=library
+        self.textChanged.connect(self.change)
+    def change(self):
+        self.library.update_filter(self.toPlainText())

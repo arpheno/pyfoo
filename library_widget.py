@@ -23,5 +23,7 @@ class LibraryWidget(QTreeView):
 
         self.model=LibraryModel(path_to_cfg)
         self._rebuild_view=False
-
-        self.setModel(Filter(self.model))
+        self.filt=Filter(self.model)
+        self.setModel(self.filt)
+    def update_filter(self,x):
+        self.filt.change_exp(x)

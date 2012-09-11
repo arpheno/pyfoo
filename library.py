@@ -180,7 +180,7 @@ class Filter(QSortFilterProxyModel):
     def __init__(self,source):
         QSortFilterProxyModel.__init__(self)
         self.setSourceModel(source)
-        self.exp="Eminem"
+        self.exp=""
     def change_exp(self,new):
         self.exp=new
         self.invalidateFilter()
@@ -188,11 +188,9 @@ class Filter(QSortFilterProxyModel):
         pt=self.sourceModel().index(row,0,parent)
         key=pt.data(32).toString()
         if key=="":
-            print "hey"
             if any([self.filterAcceptsRow(i,pt) for i in range(self.sourceModel().rowCount(pt))]):
                 return True
             return False
         elif self.exp in key:
-            print "YES"
             return True
         return False
